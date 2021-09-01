@@ -105,10 +105,6 @@
         <DCCReference Include="classe.Pedido.pas"/>
         <DCCReference Include="classe.Pessoa.pas"/>
         <DCCReference Include="classe.Produto.pas"/>
-        <DCCReference Include="uDM.pas">
-            <Form>DM</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="uDataModule.pas">
             <Form>DataModule1</Form>
             <FormType>dfm</FormType>

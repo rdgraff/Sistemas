@@ -6,7 +6,6 @@ uses
   classe.Pedido in 'classe.Pedido.pas',
   classe.Pessoa in 'classe.Pessoa.pas',
   classe.Produto in 'classe.Produto.pas',
-  uDM in 'uDM.pas' {DM},
   uDataModule in 'uDataModule.pas' {DataModule1: TDataModule};
 
 {$R *.res}
