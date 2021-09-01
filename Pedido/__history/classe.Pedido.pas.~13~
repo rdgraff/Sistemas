@@ -1,0 +1,133 @@
+unit classe.Pedido;
+
+interface
+
+uses classe.Produto, System.Generics.Collections ;
+
+type
+
+  TPedidoItem = class
+  private
+
+  public
+    Sequencia : integer;
+    Numero: Integer;
+    CodigoProduto: integer;
+    Quantidade: Double;
+    Unitario: Double;
+    Total: Double;
+  end;
+
+  TPedido = class
+  private
+    FPedidoItens: TObjectList<TPedidoItem>;
+  public
+    Numero: Integer;
+    Emissao: TDate;
+    Cliente: Integer;
+    ValorTotal: Double;
+    property PedidoItens: TObjectList<TPedidoItem> read FPedidoItens write FPedidoItens;
+    class procedure DeletarPedido(ANumPedido: Integer);
+    function CarregarPedido(ANumPedido: Integer): Variant;
+    function UltimoPedido: Integer;
+    procedure GravarPedido;
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+implementation
+
+{ TPedido }
+
+uses uDataModule;
+
+function TPedido.CarregarPedido(ANumPEdido: Integer): Variant;
+var
+  LSQL: String;
+  Item: TPedidoItem;
+begin
+  Item := TPedidoItem.Create;
+
+  DataModule1.fdquery1.Open(LSQL, []);
+  Numero := DataModule1.fdquery1.FieldByName('numero').AsInteger;
+  Emissao := DataModule1.fdquery1.FieldByName('emissao').AsDateTime;
+  Cliente := DataModule1.fdquery1.FieldByName('cliente').AsInteger;
+  ValorTotal := DataModule1.fdquery1.FieldByName('valor_total').AsCurrency;
+  DataModule1.fdquery1.First;
+  while not DataModule1.fdquery1.Eof do
+  begin
+    Item.Sequencia := DataModule1.fdquery1.FieldByName('sequencia').AsInteger;
+    Item.Numero := DataModule1.fdquery1.FieldByName('numero').AsInteger;
+    Item.CodigoProduto := DataModule1.fdquery1.FieldByName('codigoproduto').AsInteger;
+    Item.Quantidade := DataModule1.fdquery1.FieldByName('quantidade').Value;
+    Item.Unitario := DataModule1.fdquery1.FieldByName('unitario').Value;
+    Item.Total := DataModule1.fdquery1.FieldByName('total').Value;
+    PedidoItens.Add(Item);
+     DataModule1.fdquery1.Next;
+  end;
+end;
+
+constructor TPedido.Create;
+begin
+  FPedidoItens := TObjectList<TPedidoItem>.Create;
+end;
+
+class procedure TPedido.DeletarPedido(ANumPedido: Integer);
+const LSQL: String = 'DELETE FROM PEDIDOS WHERE numero_pedido = :NUMERO';
+var
+  F: TPedido;
+begin
+  F := TPedido.Create;
+  try
+    F.DeletarPedido(ANumPedido);
+  finally
+    F.Free
+  end;
+end;
+
+destructor TPedido.Destroy;
+begin
+  FPedidoItens.Free;
+  inherited;
+end;
+
+procedure TPedido.GravarPedido;
+const LSQL: String = 'INSERT INTO PEDIDOS (numero_pedido, data_emissao, cliente, valor_total) ' +
+                     'VALUES (:numero_pedido, :data_emissao, :cliente, :valor_total)';
+CONST LSQLi: string = 'INSERT INTO PEDIDO_ITENS (numero_pedido, codigo_produto, quantidade, unitario, total) ' +
+                      'VALUES (:numero_pedido, :codigo_produto, :quantidade, :unitario, :total)';
+var
+  LNumero: Integer;
+  I: Integer;
+begin
+  LNumero := UltimoPedido;
+  Numero := LNumero + 1;
+  try
+    try
+      DataModule1.fdquery1.ExecSQL(LSQL, [Numero, Emissao, Cliente, ValorTotal]);
+
+      for I := 0 to FPedidoItens.Count - 1 do
+      begin
+        DataModule1.fdquery1.ExecSQL(LSQLi, [Numero,
+                                             PedidoItens[i].CodigoProduto,
+                                             PedidoItens[i].Quantidade,
+                                             PedidoItens[i].Unitario,
+                                             PedidoItens[i].Total]);
+      end;
+
+    except
+
+
+    end;
+  finally
+
+  end;
+end;
+
+function TPedido.UltimoPedido: Integer;
+begin
+  DataModule1.fdquery1.Open('select max(numero_pedido) as ultimo from pedidos');
+  Result := DataModule1.fdquery1.FieldByName('ultimo').AsInteger;
+end;
+
+end.

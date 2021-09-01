@@ -1,0 +1,294 @@
+unit uPrincipal;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Data.DB, Datasnap.DBClient, Vcl.Grids,
+  Vcl.DBGrids, Vcl.NumberBox, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls,
+  Vcl.ComCtrls;
+
+type
+  TFPrincipal = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    eNomeCliente: TEdit;
+    gbProduto: TGroupBox;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    eDescricaoProduto: TEdit;
+    btnAdicionarProduto: TButton;
+    eCodigoProduto: TNumberBox;
+    eQuantidade: TNumberBox;
+    eUnitario: TNumberBox;
+    eValorTotal: TNumberBox;
+    btnEditarPedido: TButton;
+    btnDeletarPedido: TButton;
+    eCodigoCliente: TNumberBox;
+    Panel2: TPanel;
+    dbgProdutos: TDBGrid;
+    Panel4: TPanel;
+    Label5: TLabel;
+    Panel3: TPanel;
+    btnGravarPedido: TButton;
+    btnSair: TButton;
+    cdsProdutos: TClientDataSet;
+    cdsProdutoscodigo: TIntegerField;
+    cdsProdutosdescricao: TStringField;
+    cdsProdutosquantidade: TCurrencyField;
+    cdsProdutosunitario: TCurrencyField;
+    cdsProdutostotal: TCurrencyField;
+    dsProdutos: TDataSource;
+    Label6: TLabel;
+    cdsProdutosTotalPedido: TAggregateField;
+    DBEdit1: TDBEdit;
+    Label7: TLabel;
+    eNumPedido: TNumberBox;
+    edDataEmissao: TDateTimePicker;
+    Label8: TLabel;
+    cdsProdutossequencia: TIntegerField;
+    cdsProdutosnumero_pedido: TIntegerField;
+    procedure eCodigoClienteExit(Sender: TObject);
+    procedure eCodigoProdutoExit(Sender: TObject);
+    procedure btnAdicionarProdutoClick(Sender: TObject);
+    procedure btnSairClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnGravarPedidoClick(Sender: TObject);
+    procedure btnEditarPedidoClick(Sender: TObject);
+    procedure dbgProdutosKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure cdsProdutosquantidadeValidate(Sender: TField);
+    procedure btnDeletarPedidoClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure eUnitarioExit(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FPrincipal: TFPrincipal;
+
+implementation
+
+{$R *.dfm}
+
+uses classe.Pedido, classe.Produto, classe.Pessoa, uDataModule, Vcl.Dialogs;
+
+procedure TFPrincipal.btnAdicionarProdutoClick(Sender: TObject);
+begin
+  if cdsProdutos.State = dsBrowse then
+    cdsProdutos.Append;
+  cdsProdutoscodigo.AsInteger := eCodigoProduto.ValueInt;
+  cdsProdutosdescricao.Text := eDescricaoProduto.Text;
+  cdsProdutosquantidade.Value := eQuantidade.Value;
+  cdsProdutosunitario.Value := eUnitario.Value;
+  cdsProdutostotal.Value := eValorTotal.Value;
+  cdsProdutos.Post;
+  eCodigoProduto.SetFocus;
+
+  eQuantidade.ReadOnly := False;
+  eUnitario.ReadOnly := False;
+  eValorTotal.ReadOnly := False;
+  eCodigoProduto.ReadOnly := False;
+  eDescricaoProduto.ReadOnly := False;
+
+  eCodigoProduto.Clear;
+  eDescricaoProduto.Clear;
+  eQuantidade.Value := 0;
+  eUnitario.Value := 0;
+  eValorTotal.Value := 0;
+end;
+
+procedure TFPrincipal.btnDeletarPedidoClick(Sender: TObject);
+begin
+  if eNumPedido.Value = 0 then
+    raise Exception.Create('Informe o número do Pedido.');
+  TPedido.DeletarPedido(StrToInt(eNumPedido.Text));
+  ShowMessage('Pedido Deletado com sucesso.');
+  eNumPedido.Clear;
+  eCodigoCliente.SetFocus;
+end;
+
+procedure TFPrincipal.btnEditarPedidoClick(Sender: TObject);
+var
+  i: integer;
+  LPedido: TPedido;
+
+  LSQL: String;
+  Item: TPedidoItem;
+begin
+  if eNumPedido.Value = 0 then
+    raise Exception.Create('Informe o número do Pedido.');
+  Item := TPedidoItem.Create;
+  LSQL := 'SELECT P.*, PI.*, PR.DESCRICAO FROM PEDIDO_ITENS PI ' +
+          'INNER JOIN PEDIDOS P ON P.NUMERO_PEDIDO = PI.NUMERO_PEDIDO ' +
+          'INNER JOIN PRODUTOS PR ON PR.CODIGO = PI.CODIGO_PRODUTO ' +
+          'WHERE P.NUMERO_PEDIDO = :NUMERO';
+  DataModule1.fdquery1.Open(LSQL, [eNumPEdido.ValueInt]);
+  edDataEmissao.DateTime := DataModule1.fdquery1.FieldByName('data_emissao').AsDateTime;
+  eCodigoCliente.ValueInt := DataModule1.fdquery1.FieldByName('cliente').AsInteger;
+  DataModule1.fdquery1.First;
+  while not DataModule1.fdquery1.Eof do
+  begin
+    cdsProdutos.Append;
+    cdsProdutossequencia.Value := DataModule1.fdquery1.FieldByName('sequencia').AsInteger;
+    cdsProdutosnumero_pedido.Value := DataModule1.fdquery1.FieldByName('numero_pedido').AsInteger;
+    cdsProdutoscodigo.AsInteger := DataModule1.fdquery1.FieldByName('codigo_produto').AsInteger;
+    cdsProdutosdescricao.AsString := DataModule1.fdquery1.FieldByName('descricao').AsString;
+    cdsProdutosquantidade.Value := DataModule1.fdquery1.FieldByName('quantidade').Value;
+    cdsProdutosunitario.Value := DataModule1.fdquery1.FieldByName('unitario').Value;
+    cdsProdutostotal.Value := DataModule1.fdquery1.FieldByName('total').Value;
+    cdsProdutos.Post;
+    DataModule1.fdquery1.Next;
+  end;
+end;
+
+procedure TFPrincipal.btnGravarPedidoClick(Sender: TObject);
+var
+  LPedido: TPedido;
+  LItem: TPedidoItem;
+begin
+  LPedido := TPedido.Create;
+  LItem := TPedidoItem.create;
+  try
+    LPedido.Numero := eNumPedido.ValueInt;
+    LPedido.Cliente := eCodigoCliente.ValueInt;
+    LPedido.ValorTotal := cdsProdutosTotalPedido.Value;
+    LPedido.Emissao := edDataEmissao.DateTime;
+    DataModule1.fdtransaction1.starttransaction;
+    try
+      LPedido.GravarPedido;
+      cdsProdutos.First;
+      while not cdsProdutos.Eof do
+      begin
+        LItem.Sequencia := cdsProdutossequencia.AsInteger;
+        LItem.Pedido := LPedido.Numero;
+        LItem.CodigoProduto := cdsProdutoscodigo.AsInteger;
+        Litem.Quantidade := cdsProdutosquantidade.Value;
+        Litem.Unitario := cdsProdutosunitario.Value;
+        LItem.Total := cdsProdutostotal.Value;
+        LItem.GravarItemPedido;
+        cdsProdutos.Next;
+      end;
+      DataModule1.fdtransaction1.commit;
+    except
+      on e: Exception do
+      begin
+        DataModule1.fdtransaction1.rollback;
+        EAbort.Create(e.Message);
+      end;
+    end;
+  finally
+    LItem.Free;
+    LPedido.Free;
+  end;
+  cdsProdutos.EmptyDataSet;
+  eCodigoCliente.ValueInt := 0;
+  eCodigoCliente.OnExit(nil);
+  eCodigoCliente.SetFocus;
+end;
+
+procedure TFPrincipal.btnSairClick(Sender: TObject);
+begin
+  close;
+end;
+
+procedure TFPrincipal.cdsProdutosquantidadeValidate(Sender: TField);
+begin
+  if cdsProdutosquantidade.Value <= 0 then
+    raise Exception.Create('Quantidade inválida');
+end;
+
+procedure TFPrincipal.dbgProdutosKeyDown(Sender: TObject; var Key: Word;Shift: TShiftState);
+begin
+  if (Key = 13) then
+  begin
+    eQuantidade.Value := cdsProdutosquantidade.Value;
+    eUnitario.Value := cdsProdutosunitario.Value;
+    eValorTotal.Value := cdsProdutostotal.Value;
+    eCodigoProduto.Value := cdsProdutoscodigo.AsInteger;
+    eDescricaoProduto.Text := cdsProdutosdescricao.AsString;
+    cdsProdutos.Edit;
+
+    eQuantidade.ReadOnly := False;
+    eUnitario.ReadOnly := False;
+    eValorTotal.ReadOnly := True;
+    eCodigoProduto.ReadOnly := True;
+    eDescricaoProduto.ReadOnly := True;
+    eQuantidade.SetFocus;
+  end;
+  if Key = VK_DELETE then
+  begin
+    if (MessageDlg('Tem certeza qeu desaja excluir o produto?', mtConfirmation, mbOKCancel, 0) = mrCancel) then
+      exit;
+    if cdsProdutossequencia.Value > 0 then
+      DataModule1.fdquery1.ExecSQL(
+        'DELETE FROM PEDIDO_ITENS WHERE sequencia = :sequencia', [cdsProdutossequencia.Value]);
+    cdsProdutos.Delete;
+  end;
+end;
+
+procedure TFPrincipal.eCodigoClienteExit(Sender: TObject);
+var
+  LCliente : TCliente;
+begin
+  if eCodigoCliente.ValueInt > 0 then
+  begin
+    btnEditarPedido.Visible := false;
+    btnDeletarPedido.Visible := false;
+    try
+      LCliente := TCliente.Create;
+      LCliente.LerCliente(eCodigoCliente.ValueInt);
+      eNomeCliente.Text := LCliente.Nome;
+    finally
+      LCliente.Free;
+    end;
+  end
+  else
+  begin
+    eNomeCliente.Clear;
+    btnEditarPedido.Visible := true;
+    btnDeletarPedido.Visible := true;
+    eNumPedido.SetFocus;
+  end;
+end;
+
+procedure TFPrincipal.eCodigoProdutoExit(Sender: TObject);
+var
+  Lproduto: TProduto;
+begin
+  if eCodigoProduto.ValueInt > 0 then
+  begin
+    try
+      Lproduto := TProduto.Create;
+      Lproduto.LerProduto(eCodigoProduto.ValueInt);
+      eDescricaoProduto.Text := Lproduto.Descricao;
+      eUnitario.Value := Lproduto.Preco;
+    finally
+      Lproduto.Free;
+    end;
+  end
+  else
+    eDescricaoProduto.Clear;
+end;
+
+procedure TFPrincipal.eUnitarioExit(Sender: TObject);
+begin
+  eValorTotal.Value := eUnitario.Value * eQuantidade.Value;
+  btnAdicionarProduto.SetFocus;
+end;
+
+procedure TFPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := TCloseAction.caFree;
+end;
+
+procedure TFPrincipal.FormCreate(Sender: TObject);
+begin
+  cdsProdutos.CreateDataSet;
+end;
+
+end.

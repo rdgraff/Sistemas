@@ -1,7 +1,7 @@
 object FPrincipal: TFPrincipal
   Left = 0
   Top = 0
-  Caption = 'FPrincipal'
+  Caption = 'Pedido de Vendas'
   ClientHeight = 421
   ClientWidth = 669
   Color = clBtnFace
@@ -12,27 +12,41 @@ object FPrincipal: TFPrincipal
   Font.Style = []
   OldCreateOrder = False
   OnClose = FormClose
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
     Width = 669
-    Height = 118
+    Height = 144
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 692
     object Label1: TLabel
       Left = 40
-      Top = 17
+      Top = 59
       Width = 33
       Height = 13
       Caption = 'Cliente'
     end
+    object Label7: TLabel
+      Left = 37
+      Top = 19
+      Width = 47
+      Height = 13
+      Caption = 'N'#186' Pedido'
+    end
+    object Label8: TLabel
+      Left = 120
+      Top = 19
+      Width = 64
+      Height = 13
+      Caption = 'Data Emiss'#227'o'
+    end
     object eNomeCliente: TEdit
       Left = 88
-      Top = 31
+      Top = 73
       Width = 250
       Height = 21
       Enabled = False
@@ -41,16 +55,15 @@ object FPrincipal: TFPrincipal
     end
     object gbProduto: TGroupBox
       Left = 0
-      Top = 56
+      Top = 101
       Width = 669
-      Height = 62
+      Height = 43
       Align = alBottom
-      Caption = '[ Produto ]'
       TabOrder = 2
-      ExplicitWidth = 692
+      ExplicitTop = 75
       object Label2: TLabel
         Left = 349
-        Top = 14
+        Top = 2
         Width = 56
         Height = 13
         Alignment = taRightJustify
@@ -58,7 +71,7 @@ object FPrincipal: TFPrincipal
       end
       object Label3: TLabel
         Left = 461
-        Top = 15
+        Top = 3
         Width = 37
         Height = 13
         Alignment = taRightJustify
@@ -66,110 +79,146 @@ object FPrincipal: TFPrincipal
       end
       object Label4: TLabel
         Left = 565
-        Top = 15
+        Top = 3
         Width = 24
         Height = 13
         Alignment = taRightJustify
         Caption = 'Total'
       end
+      object Label6: TLabel
+        Left = 40
+        Top = 2
+        Width = 38
+        Height = 13
+        Alignment = taRightJustify
+        Caption = 'Produto'
+      end
       object eDescricaoProduto: TEdit
         Left = 88
-        Top = 28
+        Top = 16
         Width = 250
         Height = 21
         Enabled = False
         ReadOnly = True
-        TabOrder = 0
+        TabOrder = 1
       end
       object btnAdicionarProduto: TButton
         Left = 595
-        Top = 23
+        Top = 15
         Width = 59
         Height = 25
         Caption = 'Adicionar'
-        TabOrder = 1
+        TabOrder = 5
         OnClick = btnAdicionarProdutoClick
       end
       object eCodigoProduto: TNumberBox
-        Left = 37
-        Top = 28
-        Width = 50
+        Left = 40
+        Top = 16
+        Width = 47
         Height = 21
         Alignment = taRightJustify
-        TabOrder = 2
+        TabOrder = 0
         OnExit = eCodigoProdutoExit
       end
       object eQuantidade: TNumberBox
         Left = 344
-        Top = 28
+        Top = 16
         Width = 61
         Height = 21
         Alignment = taRightJustify
-        TabOrder = 3
+        CurrencyFormat = 0
+        Mode = nbmFloat
+        TabOrder = 2
       end
       object eUnitario: TNumberBox
         Left = 411
-        Top = 28
+        Top = 16
         Width = 87
         Height = 21
         Alignment = taRightJustify
-        TabOrder = 4
+        CurrencyFormat = 0
+        Mode = nbmFloat
+        TabOrder = 3
+        OnExit = eUnitarioExit
       end
       object eValorTotal: TNumberBox
         Left = 502
-        Top = 28
+        Top = 16
         Width = 87
         Height = 21
         Alignment = taRightJustify
-        TabOrder = 5
+        CurrencyFormat = 0
+        Mode = nbmFloat
+        TabOrder = 4
       end
     end
     object btnEditarPedido: TButton
       Left = 461
-      Top = 4
+      Top = 46
       Width = 100
       Height = 25
       Caption = 'Editar Pedio'
       TabOrder = 3
+      TabStop = False
       OnClick = btnEditarPedidoClick
     end
     object btnDeletarPedido: TButton
       Left = 461
-      Top = 29
+      Top = 71
       Width = 100
       Height = 25
       Caption = 'Deletar Pedido'
       TabOrder = 4
+      TabStop = False
       OnClick = btnDeletarPedidoClick
     end
     object eCodigoCliente: TNumberBox
       Left = 37
-      Top = 31
+      Top = 73
       Width = 50
       Height = 21
       Alignment = taRightJustify
       TabOrder = 0
       OnExit = eCodigoClienteExit
     end
+    object eNumPedido: TNumberBox
+      Left = 37
+      Top = 33
+      Width = 66
+      Height = 21
+      TabStop = False
+      Alignment = taRightJustify
+      TabOrder = 5
+    end
+    object edDataEmissao: TDateTimePicker
+      Left = 120
+      Top = 33
+      Width = 105
+      Height = 21
+      Date = 44440.000000000000000000
+      Time = 0.085763912036782130
+      TabOrder = 6
+    end
   end
   object Panel2: TPanel
     Left = 0
-    Top = 118
+    Top = 144
     Width = 669
-    Height = 257
+    Height = 231
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 692
-    ExplicitHeight = 239
+    ExplicitTop = 118
+    ExplicitHeight = 257
     object dbgProdutos: TDBGrid
       AlignWithMargins = True
       Left = 3
       Top = 3
       Width = 663
-      Height = 228
+      Height = 201
       Align = alClient
       DataSource = dsProdutos
+      ReadOnly = True
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -181,7 +230,6 @@ object FPrincipal: TFPrincipal
         item
           Expanded = False
           FieldName = 'codigo'
-          ReadOnly = True
           Title.Alignment = taRightJustify
           Title.Caption = 'C'#243'digo'
           Visible = True
@@ -189,7 +237,6 @@ object FPrincipal: TFPrincipal
         item
           Expanded = False
           FieldName = 'descricao'
-          ReadOnly = True
           Title.Caption = 'Produto'
           Width = 250
           Visible = True
@@ -220,35 +267,37 @@ object FPrincipal: TFPrincipal
     end
     object Panel4: TPanel
       Left = 0
-      Top = 234
+      Top = 207
       Width = 669
-      Height = 23
+      Height = 24
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitTop = 216
-      ExplicitWidth = 692
+      ExplicitTop = 233
       object Label5: TLabel
-        Left = 523
-        Top = 0
+        AlignWithMargins = True
+        Left = 549
+        Top = 3
         Width = 59
-        Height = 23
+        Height = 18
         Align = alRight
         Caption = 'Total Pedido'
-        ExplicitLeft = 587
-        ExplicitTop = 3
+        ExplicitLeft = 418
+        ExplicitTop = 0
       end
-      object eTotalPedido: TNumberBox
-        Left = 582
-        Top = 0
-        Width = 87
-        Height = 23
+      object DBEdit1: TDBEdit
+        AlignWithMargins = True
+        Left = 614
+        Top = 1
+        Width = 50
+        Height = 20
+        Margins.Top = 1
+        Margins.Right = 5
         Align = alRight
-        Alignment = taRightJustify
+        DataField = 'TotalPedido'
+        DataSource = dsProdutos
         TabOrder = 0
-        ExplicitLeft = 502
-        ExplicitTop = 2
-        ExplicitHeight = 21
+        ExplicitLeft = 164
       end
     end
   end
@@ -259,9 +308,9 @@ object FPrincipal: TFPrincipal
     Height = 46
     Align = alBottom
     BevelOuter = bvNone
+    Color = clHighlight
+    ParentBackground = False
     TabOrder = 2
-    ExplicitTop = 357
-    ExplicitWidth = 692
     object btnGravarPedido: TButton
       AlignWithMargins = True
       Left = 460
@@ -272,7 +321,6 @@ object FPrincipal: TFPrincipal
       Caption = '&Gravar'
       TabOrder = 0
       OnClick = btnGravarPedidoClick
-      ExplicitLeft = 483
     end
     object btnSair: TButton
       AlignWithMargins = True
@@ -284,12 +332,13 @@ object FPrincipal: TFPrincipal
       Caption = '&Sair'
       TabOrder = 1
       OnClick = btnSairClick
-      ExplicitLeft = 589
     end
   end
   object cdsProdutos: TClientDataSet
     Aggregates = <>
+    AggregatesActive = True
     Params = <>
+    AfterPost = cdsProdutosAfterPost
     Left = 112
     Top = 206
     object cdsProdutoscodigo: TIntegerField
@@ -311,6 +360,19 @@ object FPrincipal: TFPrincipal
     object cdsProdutostotal: TCurrencyField
       FieldName = 'total'
       DisplayFormat = ',0.00'
+    end
+    object cdsProdutossequencia: TIntegerField
+      FieldName = 'sequencia'
+    end
+    object cdsProdutosnumero_pedido: TIntegerField
+      FieldName = 'numero_pedido'
+    end
+    object cdsProdutosTotalPedido: TAggregateField
+      FieldName = 'TotalPedido'
+      Active = True
+      DisplayName = ''
+      DisplayFormat = ',0.00'
+      Expression = 'sum(total)'
     end
   end
   object dsProdutos: TDataSource

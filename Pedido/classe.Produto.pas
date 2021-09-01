@@ -10,18 +10,23 @@ type
     Codigo: integer;
     Descricao: String;
     Preco: Double;
-    procedure create(AValue: Integer) overload;
+    procedure LerProduto(AValue: Integer);
   end;
 
 implementation
 
 { TProduto }
 
-procedure TProduto.create(AValue: Integer);
+uses uDataModule, System.SysUtils;
+
+procedure TProduto.LerProduto(AValue: Integer);
+var
+  LSQL: String;
 begin
-  Codigo := AValue;
-  Descricao := '';
-  Preco := 0;
+  LSQL := 'select descricao, preco from produtos where codigo = ' + intToStr(Avalue);
+  DataModule1.fdquery1.open(LSQL);
+  Descricao := DataModule1.fdquery1.FieldByName('descricao').AsString;
+  Preco :=  DataModule1.fdquery1.FieldByName('preco').Value;
 end;
 
 end.

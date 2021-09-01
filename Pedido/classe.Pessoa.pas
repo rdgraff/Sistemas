@@ -19,17 +19,15 @@ implementation
 
 { TCliente }
 
-uses uDM;
+uses uDataModule, System.SysUtils;
 
 procedure TCliente.LerCliente(AValue : Integer);
-//var
-//  Q: TConexao;
+var
+  LSQL: String;
 begin
-  TConexao.create
-  Codigo := AValue;
-  Nome := '';
-  Cidade := '';
-  UF := '';
+  LSQL := 'select nome from clientes where codigo = ' + intToStr(Avalue);
+  DataModule1.fdquery1.open(LSQL);
+  Nome := DataModule1.fdquery1.FieldByName('nome').AsString;
 end;
 
 end.
