@@ -47,6 +47,7 @@ begin
 end;
 
 class procedure TPedido.DeletarPedido(ANumPedido: Integer);
+const LSQL: String = 'DELETE FROM PEDIDOS WHERE numero_pedido = :NUMERO';
 begin
   DataModule1.fdquery1.ExecSQL('DELETE FROM PEDIDOS WHERE numero_pedido = :NUMERO', [ANumPedido]);
   DataModule1.fdquery1.ExecSQL('DELETE FROM PEDIDO_ITENS WHERE numero_pedido = :NUMERO', [ANumPedido]);

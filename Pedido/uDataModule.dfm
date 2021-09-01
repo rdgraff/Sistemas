@@ -23,7 +23,13 @@ object DataModule1: TDataModule1
   end
   object FDQuery1: TFDQuery
     Connection = FDConnection1
+    Transaction = FDTransaction1
     Left = 40
     Top = 136
+  end
+  object FDTransaction1: TFDTransaction
+    Connection = FDConnection1
+    Left = 176
+    Top = 128
   end
 end

@@ -1,0 +1,51 @@
+create database bancopedido
+default character set utf8
+default collate utf8_general_ci;
+
+create table CIDADES (
+codigo integer NOT NULL,
+nome varchar(60)  NOT NULL,
+uf varchar(2),
+primary key (codigo)
+) Default charset = utf8;
+
+create table CLIENTES (
+codigo int NOT NULL,
+nome varchar(60)  NOT NULL,
+cidade integer,
+primary key (codigo)
+) Default charset = utf8;
+
+create table produtos (
+codigo int NOT NULL,
+descricao varchar(100) NOT NULL,
+preco numeric(12,3),
+primary key (codigo)
+) Default charset = utf8;
+
+create database bancoprova
+default character set utf8
+default collate utf8_general_ci;
+
+create table pedidos (
+numero_pedido integer NOT NULL auto_increment,
+data_emissao datetime NOT NULL,
+cliente integer NOT NULL,
+valor_total Double,
+primary key (numero_pedido)
+) Default charset = utf8; 
+
+create table pedido_itens (
+sequencia integer NOT NULL auto_increment,
+numero_pedido integer NOT NULL,
+codigo_produto integer NOT NULL,
+quantidade Double,
+unitario Double,
+total double,
+primary key (sequencia)
+) Default charset = utf8;  
+
+ALTER TABLE clientes ADD CONSTRAINT fk_cidade FOREIGN KEY ( cidade ) REFERENCES cidades ( codigo ) ;  
+ALTER TABLE pedidos ADD CONSTRAINT fk_cliente FOREIGN KEY ( cliente ) REFERENCES clientes ( codigo ) ;
+ALTER TABLE pedido_itens ADD CONSTRAINT fk_produto FOREIGN KEY ( codigo_produto ) REFERENCES produtos ( codigo ) ;
+   

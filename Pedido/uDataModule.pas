@@ -16,6 +16,7 @@ type
     FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink;
     FDGUIxWaitCursor1: TFDGUIxWaitCursor;
     FDQuery1: TFDQuery;
+    FDTransaction1: TFDTransaction;
   private
     { Private declarations }
   public
